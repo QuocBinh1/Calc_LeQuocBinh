@@ -1,171 +1,212 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Calc_LeQuocBinh
 {
-
     public partial class frmBinh : Form
     {
-        //fields
-        double result = 0;
-        string operation = string.Empty;
-        string fstNum,secNum;
-        bool enterValue = false;
+        // Fields
+        private double result = 0;
+        private string operation = string.Empty;
+        private string fstNum, secNum;
+        private bool enterValue = false;
+
         public frmBinh()
         {
             InitializeComponent();
         }
 
-        private void frmBinh_Load(object sender, EventArgs e)
+        private void BtnMthOperation_Click(object sender, EventArgs e)
         {
-            
-        }
-        private void BtnRound_Click(object sender, EventArgs e)
-        {
-           
-        }
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton18_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton19_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton13_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton14_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton15_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton9_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton10_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton11_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton5_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton6_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton7_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton4_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton3_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton2_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton17_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton16_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton12_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton8_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void circularButton21_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Btn(object sender, EventArgs e)
-        {
-
-        }
-
-        //number
-        private void BtnNum_Click(object sender, EventArgs e)
-        {
-            if(TxtDisplay1.Text == "0" || enterValue)TxtDisplay1.Text = string.Empty;
-            enterValue = false;
-            Artanbutton button = new ArtanButton();
-            if(button.text == ".")
+            if (result != 0) BtnEquals.PerformClick();
+            else
             {
-                if(TxtDisplay1.Text.Contains("."))
-                    TxtDisplay1.Text = TxtDisplay1.Text + button.text;
+                result = GetCurrentInput();
             }
-             else   
-                TxtDisplay1.Text = TxtDisplay1 + button.text;
+
+            var button = (CircularButton)sender;
+            operation = button.Text == "+/-" ? ToggleSign() : button.Text;
+            enterValue = true;
+
+            if (TxtDisplay1.Text != "0")
+            {
+                UpdateDisplay();
+            }
+        }
+
+        private double GetCurrentInput()
+        {
+            string cleanedInput = TxtDisplay1.Text.Replace(".", "").Replace(",", ".");
+            return Convert.ToDouble(cleanedInput);
+        }
+
+        private string ToggleSign()
+        {
+            return TxtDisplay1.Text.StartsWith("-") ? "-" : "+";
+        }
+
+        private void UpdateDisplay()
+        {
+            TxtDisplay2.Text = $"{FormatNumber(result)} {operation}";
+            fstNum = $"{result}";
+            TxtDisplay1.Text = string.Empty;
+        }
+
+        private void BtnEquals_Click(object sender, EventArgs e)
+        {
+            secNum = TxtDisplay1.Text.Replace(".", "").Replace(",", ".");
+
+            // Kiểm tra nếu có phép toán
+            if (string.IsNullOrEmpty(operation) && result == 0)
+            {
+                TxtDisplay1.Text = "Chưa chọn phép toán.";
+                return;
+            }
+
+            // Kiểm tra nếu có giá trị trong TxtDisplay1
+            if (TxtDisplay1.Text != string.Empty)
+            {
+                if (operation == "/" && TxtDisplay1.Text == "0")
+                {
+                    TxtDisplay1.Text = "Không thể chia cho 0.";
+                    return;
+                }
+
+                double secNumDouble;
+                if (!double.TryParse(secNum, out secNumDouble))
+                {
+                    TxtDisplay1.Text = "Lỗi định dạng số.";
+                    return;
+                }
+
+                // Nếu không có phép toán, sử dụng kết quả trước
+                // Nếu chưa có kết quả (trong lần nhấn "=" đầu tiên)
+                if (result == 0)
+                {
+                    result = double.Parse(TxtDisplay1.Text); // Lưu số đầu tiên
+                }
+                PerformCalculation(secNumDouble);
+                // Hiển thị kết quả
+                TxtDisplay1.Text = FormatNumber(result);
+                UpdateHistory(secNumDouble);
+
+                // Reset phép toán và số đầu
+                //operation = string.Empty;
+                //fstNum = string.Empty;
+                fstNum = result.ToString();
+            }
+        }
+
+        private void PerformCalculation(double secNumDouble)
+        {
+            switch (operation)
+            {
+                case "+":
+                    result += secNumDouble;
+                    break;
+                case "-":
+                    result -= secNumDouble;
+                    break;
+                case "x":
+                    result *= secNumDouble;
+                    break;
+                case "/":
+                    result /= secNumDouble;
+                    break;
+            }
+
+            TxtDisplay1.Text = FormatNumber(result);
+            UpdateHistory(secNumDouble);
+            operation = string.Empty;
+            fstNum = string.Empty;
+        }
+
+        private string FormatNumber(double number)
+        {
+            return number.ToString("#,##0.##", new CultureInfo("vi-VN"));
+        }
+
+        private void UpdateHistory(double secNumDouble)
+        {
+            //string formattedFstNum = FormatNumber(double.Parse(fstNum.Replace(".", "").Replace(",", ".")));
+            // TxtDisplay2.Text = $"{formattedFstNum} {operation} {FormatNumber(secNumDouble)} = {FormatNumber(result)}";
+            double parsedFstNum;
+
+            if (!string.IsNullOrEmpty(fstNum) && double.TryParse(fstNum.Replace(".", "").Replace(",", "."), out parsedFstNum))
+            {
+                string formattedFstNum = FormatNumber(parsedFstNum);
+                TxtDisplay2.Text = $"{formattedFstNum} {operation} {FormatNumber(secNumDouble)} = {FormatNumber(result)}";
+            }
+            else
+            {
+                TxtDisplay2.Text = $"0 {operation} {FormatNumber(secNumDouble)} = {FormatNumber(result)}";
+            }
+        }
+
+
+        private void ButtonPM_Click(object sender, EventArgs e)
+        {
+            TxtDisplay1.Text = TxtDisplay1.Text.StartsWith("-")
+                ? TxtDisplay1.Text.TrimStart('-')
+                : "-" + TxtDisplay1.Text;
+        }
+
+        private void BtnOperations_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double value = Convert.ToDouble(TxtDisplay1.Text.Replace(",", "")) / 100;
+                TxtDisplay1.Text = FormatNumber(value);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi: " + ex.Message);
+            }
+        }
+
+        private void btn_c_Click(object sender, EventArgs e)
+        {
+            TxtDisplay1.Text = "0";
+            TxtDisplay2.Text = string.Empty;
+            result = 0;
+        }
+
+        private void btn_del_Click(object sender, EventArgs e)
+        {
+            if (TxtDisplay1.Text.Length > 0)
+            {
+                TxtDisplay1.Text = TxtDisplay1.Text.Remove(TxtDisplay1.Text.Length - 1, 1);
+            }
+            if (string.IsNullOrEmpty(TxtDisplay1.Text))
+            {
+                TxtDisplay1.Text = "0";
+            }
+        }
+
+        private void Btn1_Click(object sender, EventArgs e)
+        {
+            if (TxtDisplay1.Text == "0" || enterValue) TxtDisplay1.Text = string.Empty;
+            enterValue = false;
+
+            var button = (CircularButton)sender;
+            if (button.Text == ".")
+            {
+                if (!TxtDisplay1.Text.Contains(",")) TxtDisplay1.Text += ",";
+            }
+            else
+            {
+                TxtDisplay1.Text += button.Text;
+                UpdateFormattedDisplay();
+            }
+        }
+
+        private void UpdateFormattedDisplay()
+        {
+            if (double.TryParse(TxtDisplay1.Text.Replace(".", "").Replace(",", "."), out double number))
+            {
+                TxtDisplay1.Text = FormatNumber(number);
+            }
         }
     }
 }
- 

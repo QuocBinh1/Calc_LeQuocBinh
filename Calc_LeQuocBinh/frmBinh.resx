@@ -137,15 +137,6 @@
         TkSuQmCC
 </value>
   </data>
-  <data name="btnExit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAK9JREFUSEvt
-        lMkNwzAMBFVKSnEpLiWdpBSX4lIczmMBQqLO/AINsPCB5VKyCKfN5jI9k7pNh6nLSrhEkyYfU1Q4oyps
-        LypAbxOr0zP3tcWE9MLhZSLYf+uoSQGFucmLQDzAVeG1uoKRQ/VNoLWogtEGfgRpwLvIW9AyIx+OVzup
-        1YVgzo0SBwnyEKomQ4csTlNulpgk/0yTqTEVedCKmrD1X34V1HZZbeKHYfP/pPQFrd3Rr0+q9CAAAAAA
-        SUVORK5CYII=
-</value>
-  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>25</value>
   </metadata>

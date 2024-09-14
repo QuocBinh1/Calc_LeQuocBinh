@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Calc_LeQuocBinh
 {
-    public partial class CircularButton : UserControl
+    public partial class CircularButton : Button
     {
         private string buttonText;
         private Image buttonImage;  // Thêm thuộc tính hình ảnh
@@ -112,8 +112,9 @@ namespace Calc_LeQuocBinh
             // CircularButton
             // 
             this.Name = "CircularButton";
-            this.Size = new System.Drawing.Size(87, 93);
+            this.Size = new System.Drawing.Size(77, 65);
             this.ResumeLayout(false);
+
         }
     }
 }
