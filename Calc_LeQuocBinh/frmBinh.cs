@@ -1,212 +1,217 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Calc_LeQuocBinh
 {
     public partial class frmBinh : Form
     {
-        // Fields
-        private double result = 0;
-        private string operation = string.Empty;
-        private string fstNum, secNum;
-        private bool enterValue = false;
-
+        //fields
+        double result = 0;
+        string operation = string.Empty;
+        string fstNum,secNum;
+        bool enterValue = false;
         public frmBinh()
         {
             InitializeComponent();
         }
-
         private void BtnMthOperation_Click(object sender, EventArgs e)
         {
             if (result != 0) BtnEquals.PerformClick();
             else
             {
-                result = GetCurrentInput();
+                string cleanedInput = TxtDisplay1.Text.Replace(".", "").Replace(",", ".");
+                result = Convert.ToDouble(cleanedInput);
             }
-
-            var button = (CircularButton)sender;
-            operation = button.Text == "+/-" ? ToggleSign() : button.Text;
-            enterValue = true;
-
-            if (TxtDisplay1.Text != "0")
+            CircularButton button = (CircularButton)sender;
+            if(operation == "+/-")
             {
-                UpdateDisplay();
+
+                if (TxtDisplay1.Text.StartsWith("-"))
+                {
+                    operation = "-";
+
+                }
+                else
+                {
+                    operation = "+";
+                }
             }
-        }
-
-        private double GetCurrentInput()
-        {
-            string cleanedInput = TxtDisplay1.Text.Replace(".", "").Replace(",", ".");
-            return Convert.ToDouble(cleanedInput);
-        }
-
-        private string ToggleSign()
-        {
-            return TxtDisplay1.Text.StartsWith("-") ? "-" : "+";
-        }
-
-        private void UpdateDisplay()
-        {
-            TxtDisplay2.Text = $"{FormatNumber(result)} {operation}";
-            fstNum = $"{result}";
-            TxtDisplay1.Text = string.Empty;
+            else
+            {
+                operation = button.Text;
+            }
+            enterValue = true;
+            if(TxtDisplay1.Text != "0")
+            {
+                TxtDisplay2.Text = $"{result.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"))} {operation}";
+                fstNum = $"{result}";
+                TxtDisplay1.Text = string.Empty;
+            }
         }
 
         private void BtnEquals_Click(object sender, EventArgs e)
         {
-            secNum = TxtDisplay1.Text.Replace(".", "").Replace(",", ".");
-
-            // Kiểm tra nếu có phép toán
-            if (string.IsNullOrEmpty(operation) && result == 0)
+            // Loại bỏ dấu phân cách hàng nghìn và thay dấu phẩy bằng dấu chấm để xử lý phép toán
+            string cleanedInput = TxtDisplay1.Text.Replace(".", "").Replace(",", ".");
+            secNum = cleanedInput;
+            // Kiểm tra toán tử
+            if (string.IsNullOrEmpty(operation))
             {
                 TxtDisplay1.Text = "Chưa chọn phép toán.";
                 return;
             }
-
+            // Cập nhật TxtDisplay2 với biểu thức toán học chỉ một lần
+            if (TxtDisplay2.Text.EndsWith(" ="))
+            {
+                TxtDisplay2.Text = $"{fstNum} {operation} {secNum} =";
+            }
             // Kiểm tra nếu có giá trị trong TxtDisplay1
             if (TxtDisplay1.Text != string.Empty)
             {
-                if (operation == "/" && TxtDisplay1.Text == "0")
+                if (TxtDisplay1.Text == "0" && operation == "/")
                 {
                     TxtDisplay1.Text = "Không thể chia cho 0.";
                     return;
                 }
 
                 double secNumDouble;
-                if (!double.TryParse(secNum, out secNumDouble))
+                if (!double.TryParse(cleanedInput, out secNumDouble))
                 {
                     TxtDisplay1.Text = "Lỗi định dạng số.";
                     return;
                 }
 
-                // Nếu không có phép toán, sử dụng kết quả trước
-                // Nếu chưa có kết quả (trong lần nhấn "=" đầu tiên)
-                if (result == 0)
+                // Thực hiện phép toán
+                switch (operation)
                 {
-                    result = double.Parse(TxtDisplay1.Text); // Lưu số đầu tiên
+                    case "+":
+                        result = result + secNumDouble;
+                        break;
+                    case "-":
+                        result = result - secNumDouble;
+                        break;
+                    case "x":
+                        result = result * secNumDouble;
+                        break;
+                    case "/":
+                        result = result / secNumDouble;
+                        break;
                 }
-                PerformCalculation(secNumDouble);
-                // Hiển thị kết quả
-                TxtDisplay1.Text = FormatNumber(result);
-                UpdateHistory(secNumDouble);
 
-                // Reset phép toán và số đầu
-                //operation = string.Empty;
-                //fstNum = string.Empty;
-                fstNum = result.ToString();
+                // Hiển thị kết quả với định dạng hàng nghìn và dấu thập phân đúng
+                TxtDisplay1.Text = result.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+
+                // Cập nhật lại TxtDisplay2 với biểu thức và định dạng số đúng
+                string formattedFstNum = double.Parse(fstNum.Replace(".", "").Replace(",", ".")).ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+                string formattedSecNum = secNumDouble.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+                string formattedResult = result.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+
+                TxtDisplay2.Text = $"{formattedFstNum} {operation} {formattedSecNum} = {formattedResult}";
+
+                // Đặt lại toán tử và số đầu vào
+                operation = string.Empty;
+                fstNum = string.Empty;
             }
         }
 
-        private void PerformCalculation(double secNumDouble)
+        //+/-        
+        private void ButtonPM_Click(object sender, EventArgs e)
         {
-            switch (operation)
+            if (TxtDisplay1.Text.StartsWith("-"))
             {
-                case "+":
-                    result += secNumDouble;
-                    break;
-                case "-":
-                    result -= secNumDouble;
-                    break;
-                case "x":
-                    result *= secNumDouble;
-                    break;
-                case "/":
-                    result /= secNumDouble;
-                    break;
-            }
-
-            TxtDisplay1.Text = FormatNumber(result);
-            UpdateHistory(secNumDouble);
-            operation = string.Empty;
-            fstNum = string.Empty;
-        }
-
-        private string FormatNumber(double number)
-        {
-            return number.ToString("#,##0.##", new CultureInfo("vi-VN"));
-        }
-
-        private void UpdateHistory(double secNumDouble)
-        {
-            //string formattedFstNum = FormatNumber(double.Parse(fstNum.Replace(".", "").Replace(",", ".")));
-            // TxtDisplay2.Text = $"{formattedFstNum} {operation} {FormatNumber(secNumDouble)} = {FormatNumber(result)}";
-            double parsedFstNum;
-
-            if (!string.IsNullOrEmpty(fstNum) && double.TryParse(fstNum.Replace(".", "").Replace(",", "."), out parsedFstNum))
-            {
-                string formattedFstNum = FormatNumber(parsedFstNum);
-                TxtDisplay2.Text = $"{formattedFstNum} {operation} {FormatNumber(secNumDouble)} = {FormatNumber(result)}";
+                // Loại bỏ dấu "-" để biến số thành dương
+                TxtDisplay1.Text = TxtDisplay1.Text.TrimStart('-');
             }
             else
             {
-                TxtDisplay2.Text = $"0 {operation} {FormatNumber(secNumDouble)} = {FormatNumber(result)}";
+                // Thêm dấu "-" vào đầu để biến số thành âm
+                TxtDisplay1.Text = "-" + TxtDisplay1.Text;
             }
         }
-
-
-        private void ButtonPM_Click(object sender, EventArgs e)
-        {
-            TxtDisplay1.Text = TxtDisplay1.Text.StartsWith("-")
-                ? TxtDisplay1.Text.TrimStart('-')
-                : "-" + TxtDisplay1.Text;
-        }
-
+        // %        
         private void BtnOperations_Click(object sender, EventArgs e)
         {
             try
             {
-                double value = Convert.ToDouble(TxtDisplay1.Text.Replace(",", "")) / 100;
-                TxtDisplay1.Text = FormatNumber(value);
+                // Kiểm tra nếu không có phép toán nào đang thực hiện
+                if (string.IsNullOrEmpty(operation))
+                {
+                    // Lấy giá trị hiện tại từ TxtDisplay1
+                    double value = Convert.ToDouble(TxtDisplay1.Text.Replace(",", ""));
+
+                    // Chia giá trị cho 100 để ra phần trăm
+                    value = value / 100;
+
+                    // Hiển thị kết quả với định dạng hàng nghìn
+                    TxtDisplay1.Text = value.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+                }
+                else
+                {
+                    // Trường hợp có phép tính thì xử lý phần trăm theo phép tính hiện tại
+                    double secNumDouble = Convert.ToDouble(TxtDisplay1.Text.Replace(",", ""));
+                    secNumDouble = secNumDouble / 100;
+
+                    TxtDisplay1.Text = secNumDouble.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
+            //RtBoxDisplayHistort.AppendText($"{TxtDisplay2.Text} = {TxtDisplay1.Text} \n");
         }
-
         private void btn_c_Click(object sender, EventArgs e)
         {
+
             TxtDisplay1.Text = "0";
             TxtDisplay2.Text = string.Empty;
             result = 0;
         }
-
         private void btn_del_Click(object sender, EventArgs e)
         {
             if (TxtDisplay1.Text.Length > 0)
             {
                 TxtDisplay1.Text = TxtDisplay1.Text.Remove(TxtDisplay1.Text.Length - 1, 1);
             }
-            if (string.IsNullOrEmpty(TxtDisplay1.Text))
+            if (TxtDisplay1.Text == string.Empty)
             {
                 TxtDisplay1.Text = "0";
             }
         }
-
         private void Btn1_Click(object sender, EventArgs e)
         {
             if (TxtDisplay1.Text == "0" || enterValue) TxtDisplay1.Text = string.Empty;
             enterValue = false;
+            CircularButton button = (CircularButton)sender;
 
-            var button = (CircularButton)sender;
             if (button.Text == ".")
             {
-                if (!TxtDisplay1.Text.Contains(",")) TxtDisplay1.Text += ",";
+                // Kiểm tra nếu dấu chấm chưa tồn tại trong chuỗi
+                if (!TxtDisplay1.Text.Contains(","))
+                    TxtDisplay1.Text = TxtDisplay1.Text + ",";
             }
             else
             {
-                TxtDisplay1.Text += button.Text;
-                UpdateFormattedDisplay();
-            }
-        }
+                TxtDisplay1.Text = TxtDisplay1.Text + button.Text;
 
-        private void UpdateFormattedDisplay()
-        {
-            if (double.TryParse(TxtDisplay1.Text.Replace(".", "").Replace(",", "."), out double number))
-            {
-                TxtDisplay1.Text = FormatNumber(number);
+                // Chỉ định dạng lại nếu không phải là dấu chấm
+                if (double.TryParse(TxtDisplay1.Text.Replace(".", "").Replace(",", "."), out double number))
+                {
+                    // Hiển thị lại với định dạng hàng nghìn và dấu thập phân
+                    TxtDisplay1.Text = number.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"));
+                }
             }
+
         }
     }
+
 }
+ 
