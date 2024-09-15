@@ -16,7 +16,7 @@ namespace Calc_LeQuocBinh
         //fields
         double result = 0;
         string operation = string.Empty;
-        string fstNum,secNum;
+        string fstNum, secNum;
         bool enterValue = false;
         public frmBinh()
         {
@@ -31,7 +31,7 @@ namespace Calc_LeQuocBinh
                 result = Convert.ToDouble(cleanedInput);
             }
             CircularButton button = (CircularButton)sender;
-            if(operation == "+/-")
+            if (operation == "+/-")
             {
 
                 if (TxtDisplay1.Text.StartsWith("-"))
@@ -49,7 +49,7 @@ namespace Calc_LeQuocBinh
                 operation = button.Text;
             }
             enterValue = true;
-            if(TxtDisplay1.Text != "0")
+            if (TxtDisplay1.Text != "0")
             {
                 TxtDisplay2.Text = $"{result.ToString("#,##0.##", new System.Globalization.CultureInfo("vi-VN"))} {operation}";
                 fstNum = $"{result}";
@@ -94,15 +94,24 @@ namespace Calc_LeQuocBinh
                 {
                     case "+":
                         result = result + secNumDouble;
+                        RtBoxDisplayHistory.AppendText($"{fstNum} + {secNum} = {result} \n");
                         break;
                     case "-":
+                        
                         result = result - secNumDouble;
+                        RtBoxDisplayHistory.AppendText($"{fstNum} - {secNum} = {result} \n");
                         break;
                     case "x":
+                        
                         result = result * secNumDouble;
+                        RtBoxDisplayHistory.AppendText($"{fstNum} x {secNum} = {result} \n");
                         break;
                     case "/":
+                        
                         result = result / secNumDouble;
+                        RtBoxDisplayHistory.AppendText($"{fstNum} /  {secNum}  = {result} \n");
+                        break;
+                    default: TxtDisplay2.Text = $"{TxtDisplay1.Text} =";
                         break;
                 }
 
@@ -186,6 +195,40 @@ namespace Calc_LeQuocBinh
                 TxtDisplay1.Text = "0";
             }
         }
+
+        private void btnParen_Click(object sender, EventArgs e)
+        {
+            CircularButton button = (CircularButton)sender;
+            operation = button.Text;
+            switch (operation)
+            {
+                case "1/x":
+                    TxtDisplay2.Text = $"1/({TxtDisplay1.Text})";
+                    TxtDisplay1.Text = Convert.ToString(1.0 / Convert.ToDouble(TxtDisplay1.Text));
+
+                    break;
+            }
+        }
+
+        private void frmBinh_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnHistory_Click(object sender, EventArgs e)
+        {
+            PnlHistory.Height = (PnlHistory.Height == 5) ? PnlHistory.Height = 590 : 5;
+        }
+
+        private void BtnClearHistory_Click(object sender, EventArgs e)
+        {
+            RtBoxDisplayHistory.Clear();
+            if(RtBoxDisplayHistory.Text == string.Empty)
+            {
+                RtBoxDisplayHistory.Text = "Không có lịch sử";
+            }
+        }
+
         private void Btn1_Click(object sender, EventArgs e)
         {
             if (TxtDisplay1.Text == "0" || enterValue) TxtDisplay1.Text = string.Empty;
@@ -214,4 +257,3 @@ namespace Calc_LeQuocBinh
     }
 
 }
- 

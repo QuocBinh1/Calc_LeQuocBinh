@@ -29,16 +29,18 @@ namespace Calc_LeQuocBinh
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmBinh));
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.PnlTitle = new System.Windows.Forms.Panel();
             this.btnHistory = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.TxtDisplay2 = new System.Windows.Forms.TextBox();
             this.TxtDisplay1 = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.PnlHistory = new System.Windows.Forms.Panel();
+            this.RtBoxDisplayHistory = new System.Windows.Forms.RichTextBox();
+            this.BtnClearHistory = new System.Windows.Forms.Button();
             this.BtnDivision = new Calc_LeQuocBinh.CircularButton();
             this.BtnPercent = new Calc_LeQuocBinh.CircularButton();
-            this.circularButton19 = new Calc_LeQuocBinh.CircularButton();
+            this.btnParen = new Calc_LeQuocBinh.CircularButton();
             this.BtnC = new Calc_LeQuocBinh.CircularButton();
             this.BtnMultiply = new Calc_LeQuocBinh.CircularButton();
             this.Btn9 = new Calc_LeQuocBinh.CircularButton();
@@ -56,17 +58,18 @@ namespace Calc_LeQuocBinh
             this.BtnDesimal = new Calc_LeQuocBinh.CircularButton();
             this.Btn0 = new Calc_LeQuocBinh.CircularButton();
             this.BtnPM = new Calc_LeQuocBinh.CircularButton();
-            this.panel1.SuspendLayout();
+            this.PnlTitle.SuspendLayout();
+            this.PnlHistory.SuspendLayout();
             this.SuspendLayout();
             // 
-            // panel1
+            // PnlTitle
             // 
-            this.panel1.Controls.Add(this.btnHistory);
-            this.panel1.Controls.Add(this.button1);
-            this.panel1.Location = new System.Drawing.Point(12, 13);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(317, 37);
-            this.panel1.TabIndex = 23;
+            this.PnlTitle.Controls.Add(this.btnHistory);
+            this.PnlTitle.Controls.Add(this.button1);
+            this.PnlTitle.Location = new System.Drawing.Point(12, 13);
+            this.PnlTitle.Name = "PnlTitle";
+            this.PnlTitle.Size = new System.Drawing.Size(317, 37);
+            this.PnlTitle.TabIndex = 23;
             // 
             // btnHistory
             // 
@@ -81,6 +84,7 @@ namespace Calc_LeQuocBinh
             this.btnHistory.Size = new System.Drawing.Size(40, 37);
             this.btnHistory.TabIndex = 2;
             this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.btnHistory_Click);
             // 
             // button1
             // 
@@ -106,7 +110,6 @@ namespace Calc_LeQuocBinh
             this.TxtDisplay2.Size = new System.Drawing.Size(326, 43);
             this.TxtDisplay2.TabIndex = 24;
             this.TxtDisplay2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      
             // 
             // TxtDisplay1
             // 
@@ -119,7 +122,6 @@ namespace Calc_LeQuocBinh
             this.TxtDisplay1.TabIndex = 25;
             this.TxtDisplay1.Text = "0";
             this.TxtDisplay1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-
             // 
             // button2
             // 
@@ -135,11 +137,41 @@ namespace Calc_LeQuocBinh
             // 
             // PnlHistory
             // 
+            this.PnlHistory.Controls.Add(this.BtnClearHistory);
+            this.PnlHistory.Controls.Add(this.RtBoxDisplayHistory);
             this.PnlHistory.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.PnlHistory.Location = new System.Drawing.Point(0, 633);
+            this.PnlHistory.Location = new System.Drawing.Point(0, 636);
+            this.PnlHistory.Margin = new System.Windows.Forms.Padding(0);
             this.PnlHistory.Name = "PnlHistory";
-            this.PnlHistory.Size = new System.Drawing.Size(338, 47);
-            this.PnlHistory.TabIndex = 24;
+            this.PnlHistory.Size = new System.Drawing.Size(338, 5);
+            this.PnlHistory.TabIndex = 27;
+            // 
+            // RtBoxDisplayHistory
+            // 
+            this.RtBoxDisplayHistory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.RtBoxDisplayHistory.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.RtBoxDisplayHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RtBoxDisplayHistory.ForeColor = System.Drawing.Color.Black;
+            this.RtBoxDisplayHistory.Location = new System.Drawing.Point(0, 0);
+            this.RtBoxDisplayHistory.Name = "RtBoxDisplayHistory";
+            this.RtBoxDisplayHistory.Size = new System.Drawing.Size(338, 5);
+            this.RtBoxDisplayHistory.TabIndex = 28;
+            this.RtBoxDisplayHistory.Text = "";
+            // 
+            // BtnClearHistory
+            // 
+            this.BtnClearHistory.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.BtnClearHistory.FlatAppearance.BorderSize = 0;
+            this.BtnClearHistory.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Red;
+            this.BtnClearHistory.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnClearHistory.Image = ((System.Drawing.Image)(resources.GetObject("BtnClearHistory.Image")));
+            this.BtnClearHistory.Location = new System.Drawing.Point(0, -32);
+            this.BtnClearHistory.Margin = new System.Windows.Forms.Padding(0);
+            this.BtnClearHistory.Name = "BtnClearHistory";
+            this.BtnClearHistory.Size = new System.Drawing.Size(338, 37);
+            this.BtnClearHistory.TabIndex = 29;
+            this.BtnClearHistory.UseVisualStyleBackColor = true;
+            this.BtnClearHistory.Click += new System.EventHandler(this.BtnClearHistory_Click);
             // 
             // BtnDivision
             // 
@@ -159,6 +191,7 @@ namespace Calc_LeQuocBinh
             // 
             this.BtnPercent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.BtnPercent.ButtonImage = null;
+            this.BtnPercent.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Red;
             this.BtnPercent.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BtnPercent.Location = new System.Drawing.Point(176, 237);
             this.BtnPercent.Margin = new System.Windows.Forms.Padding(4);
@@ -169,18 +202,19 @@ namespace Calc_LeQuocBinh
             this.BtnPercent.UseVisualStyleBackColor = false;
             this.BtnPercent.Click += new System.EventHandler(this.BtnOperations_Click);
             // 
-            // circularButton19
+            // btnParen
             // 
-            this.circularButton19.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.circularButton19.ButtonImage = null;
-            this.circularButton19.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.circularButton19.Location = new System.Drawing.Point(92, 237);
-            this.circularButton19.Margin = new System.Windows.Forms.Padding(4);
-            this.circularButton19.Name = "circularButton19";
-            this.circularButton19.Size = new System.Drawing.Size(70, 70);
-            this.circularButton19.TabIndex = 18;
-            this.circularButton19.Text = "()";
-            this.circularButton19.UseVisualStyleBackColor = false;
+            this.btnParen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnParen.ButtonImage = null;
+            this.btnParen.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnParen.Location = new System.Drawing.Point(92, 237);
+            this.btnParen.Margin = new System.Windows.Forms.Padding(4);
+            this.btnParen.Name = "btnParen";
+            this.btnParen.Size = new System.Drawing.Size(70, 70);
+            this.btnParen.TabIndex = 18;
+            this.btnParen.Text = "1/x";
+            this.btnParen.UseVisualStyleBackColor = false;
+            this.btnParen.Click += new System.EventHandler(this.btnParen_Click);
             // 
             // BtnC
             // 
@@ -426,15 +460,15 @@ namespace Calc_LeQuocBinh
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(338, 680);
+            this.ClientSize = new System.Drawing.Size(338, 641);
             this.Controls.Add(this.PnlHistory);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.TxtDisplay1);
             this.Controls.Add(this.TxtDisplay2);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.PnlTitle);
             this.Controls.Add(this.BtnDivision);
             this.Controls.Add(this.BtnPercent);
-            this.Controls.Add(this.circularButton19);
+            this.Controls.Add(this.btnParen);
             this.Controls.Add(this.BtnC);
             this.Controls.Add(this.BtnMultiply);
             this.Controls.Add(this.Btn9);
@@ -456,7 +490,9 @@ namespace Calc_LeQuocBinh
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmBinh";
             this.Text = "frmBinh";
-            this.panel1.ResumeLayout(false);
+            this.Load += new System.EventHandler(this.frmBinh_Load);
+            this.PnlTitle.ResumeLayout(false);
+            this.PnlHistory.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -465,7 +501,7 @@ namespace Calc_LeQuocBinh
         #endregion
 
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel PnlTitle;
         private System.Windows.Forms.Button btnHistory;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox TxtDisplay2;
@@ -487,10 +523,12 @@ namespace Calc_LeQuocBinh
         private CircularButton Btn9;
         private CircularButton BtnMultiply;
         private CircularButton BtnC;
-        private CircularButton circularButton19;
+        private CircularButton btnParen;
         private CircularButton BtnPercent;
         private CircularButton BtnDivision;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Panel PnlHistory;
+        private System.Windows.Forms.RichTextBox RtBoxDisplayHistory;
+        private System.Windows.Forms.Button BtnClearHistory;
     }
 }
